@@ -9,11 +9,11 @@ import java.util.Arrays;
 public class HadoopHelper {
 
     public static void main(String[] args){
-        String hdfsMaster = "hdfs://172.16.9.246:8020";
+        String hdfsMaster = "hdfs://localhost:8020";
         FileSystem fs = HadoopHelper.getFileSystemInstance(hdfsMaster);
         renameFileBulk(fs,
-                "/user/root/data/yss_zhfa2.5/all/LACCOUNT/part*",
-                "/user/root/data/yss_zhfa2.5/all/LACCOU");
+                "/user/root/part*",
+                "/user/part-");
     }
 
     public static FileSystem getFileSystemInstance(String masterUrl) {
