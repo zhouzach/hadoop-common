@@ -38,4 +38,37 @@
 
     </dependencies>
 
+    <build>
+        <directory>target</directory>
+        <outputDirectory>target/classes</outputDirectory>
+        <!--<finalName>${artifactId}-${version}</finalName>-->
+        <testOutputDirectory>target/test-classes</testOutputDirectory>
+        <!--<sourceDirectory>src/main/java, src/main/scala</sourceDirectory>-->
+        <!--<scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>-->
+        <!--<testSourceDirectory>src/test/scala</testSourceDirectory>-->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
+
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>src/main/java/**/*.java</include>
+                        <include>src/main/scala/</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

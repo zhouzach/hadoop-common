@@ -13,7 +13,8 @@ public class HadoopHelper {
         FileSystem fs = HadoopHelper.getFileSystemInstance(hdfsMaster);
         renameFileBulk(fs,
                 "/user/root/part*",
-                "/user/part-");
+                "/user/part-",
+                ".parquet");
     }
 
     public static FileSystem getFileSystemInstance(String masterUrl) {
@@ -37,12 +38,12 @@ public class HadoopHelper {
         }
     }
 
-    public static void renameFileBulk(FileSystem fs, String srcFilePattern, String dstFilePrefix) {
+    public static void renameFileBulk(FileSystem fs, String srcFilePattern, String dstFilePrefix, String dstFileSuffix) {
         Path srcPath = new Path(srcFilePattern);
 
         try {
             Arrays.stream(fs.globStatus(srcPath)).forEach(fileStatus -> {
-                Path dstPath = new Path(dstFilePrefix + System.currentTimeMillis());
+                Path dstPath = new Path(dstFilePrefix + System.currentTimeMillis() + dstFileSuffix);
                 try {
 
                     fs.rename(fileStatus.getPath(), dstPath);
