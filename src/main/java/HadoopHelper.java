@@ -1,6 +1,9 @@
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -8,7 +11,9 @@ import java.util.Arrays;
 
 public class HadoopHelper {
 
-    public static void main(String[] args){
+    private static Logger logger = LoggerFactory.getLogger(HadoopHelper.class);
+
+    public static void main(String[] args) {
         String hdfsMaster = "hdfs://localhost:8020";
         FileSystem fs = HadoopHelper.getFileSystemInstance(hdfsMaster);
         renameFileBulk(fs,
@@ -17,11 +22,78 @@ public class HadoopHelper {
                 ".parquet");
     }
 
+    public static void createFile(FileSystem fs, String file) {
+        Path filePah = new Path(file);
+
+        FSDataOutputStream outputStream = null;
+        try {
+            outputStream = fs.create(filePah);
+            logger.info("create file: " + file);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        } finally {
+            try {
+                if (outputStream != null) {
+                    // because of hdfs lease, the FSDataOutputStream out must close after creat the file
+                    // otherwise can not append buffer into the file
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        }
+
+    }
+
+    public static void appendString2Hdfs(FileSystem fs, String content, String dst) {
+
+        FSDataOutputStream outputStream = null;
+        try {
+            outputStream = fs.append(new Path(dst));
+            outputStream.writeBytes(content);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        } finally {
+            try {
+                if (outputStream != null) {
+                    // because of hdfs lease, the FSDataOutputStream out must close after creat the file
+                    // otherwise can not append buffer into the file
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        }
+    }
+
+    public static void writeString2Hdfs(FileSystem fs, String content, String dst) {
+
+        logger.info("Begin Write file into hdfs");
+        FSDataOutputStream outputStream = null;
+        try {
+            outputStream = fs.create(new Path(dst));
+            outputStream.writeBytes(content);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        } finally {
+            try {
+                if (outputStream != null) {
+                    // because of hdfs lease, the FSDataOutputStream out must close after creat the file
+                    // otherwise can not append buffer into the file
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        }
+        logger.info("End Write file into hdfs");
+    }
+
     public static FileSystem getFileSystemInstance(String masterUrl) {
         try {
             return FileSystem.get(new URI(masterUrl), new Configuration());
         } catch (Exception e) {
-            e.getMessage();
+            logger.error(e.getMessage());
             return null;
         }
     }
@@ -33,7 +105,7 @@ public class HadoopHelper {
         try {
             return fs.rename(srcPath, dstPath);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return false;
         }
     }
@@ -52,7 +124,7 @@ public class HadoopHelper {
                 }
             });
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 
@@ -60,9 +132,9 @@ public class HadoopHelper {
         Path filePath = new Path(file);
 
         try {
-            return fs.deleteOnExit(filePath);
+            return fs.delete(filePath, true);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return false;
         }
     }
@@ -70,8 +142,8 @@ public class HadoopHelper {
     public static void close(FileSystem fs) {
         try {
             if (fs != null) fs.close();
-        } catch (IOException exp) {
-            exp.getMessage();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
         }
     }
 }

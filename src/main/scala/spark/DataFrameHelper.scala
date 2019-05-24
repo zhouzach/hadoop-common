@@ -11,6 +11,41 @@ object DataFrameHelper {
 
   val dataFrame: DataFrame = sparkSession.sql("")
 
+  /**
+    * https://medium.com/@mrpowers/manually-creating-spark-dataframes-b14dae906393
+    */
+  def createDataFrame() = {
+    val someData = Seq(
+      Row(8, "bat"),
+      Row(64, "mouse"),
+      Row(-27, "horse")
+    )
+
+    val someSchema = List(
+      StructField("number", IntegerType, true),
+      StructField("word", StringType, true)
+    )
+
+    sparkSession.createDataFrame(
+      sparkSession.sparkContext.parallelize(someData),
+      StructType(someSchema)
+    )
+
+  }
+
+  def createDataFrame(sparkSession: SparkSession) = {
+
+    import sparkSession.implicits._
+
+    Seq(
+      ("a", "b", 1),
+      ("a", "b", 2),
+      ("a", "b", 3),
+      ("z", "b", 4),
+      ("a", "x", 5)
+    ).toDF("letter1", "letter2", "number1")
+  }
+
   def transform(dataFrame: DataFrame) = {
     sparkSession.createDataFrame(dataFrame.rdd, dataFrame.schema)
   }
