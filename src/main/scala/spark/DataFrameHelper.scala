@@ -11,6 +11,11 @@ object DataFrameHelper {
 
   val dataFrame: DataFrame = sparkSession.sql("")
 
+  def createDataFrameBySeq() = {
+    val userData = Seq(("Leo", 16), ("Marry", 21), ("Jack", 14), ("Tom", 18))
+    sparkSession.createDataFrame(userData).toDF("name", "age")
+  }
+
   /**
     * https://medium.com/@mrpowers/manually-creating-spark-dataframes-b14dae906393
     */
