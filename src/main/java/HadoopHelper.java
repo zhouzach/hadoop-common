@@ -91,7 +91,13 @@ public class HadoopHelper {
 
     public static FileSystem getFileSystemInstance(String masterUrl) {
         try {
-            return FileSystem.get(new URI(masterUrl), new Configuration());
+            Configuration conf = new Configuration();
+
+            // https://blog.csdn.net/wangweislk/article/details/78890163
+            conf.set("dfs.client.block.write.replace-datanode-on-failure.policy","NEVER");
+            conf.set("dfs.client.block.write.replace-datanode-on-failure.enable","true");
+
+            return FileSystem.get(new URI(masterUrl), conf);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return null;
