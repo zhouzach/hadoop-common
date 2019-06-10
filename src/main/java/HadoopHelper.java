@@ -50,7 +50,7 @@ public class HadoopHelper {
         FSDataOutputStream outputStream = null;
         try {
             outputStream = fs.append(new Path(dst));
-            outputStream.writeBytes(content);
+            outputStream.writeUTF(content);
         } catch (IOException e) {
             logger.error(e.getMessage());
         } finally {
@@ -72,7 +72,7 @@ public class HadoopHelper {
         FSDataOutputStream outputStream = null;
         try {
             outputStream = fs.create(new Path(dst));
-            outputStream.writeBytes(content);
+            outputStream.writeUTF(content);
         } catch (IOException e) {
             logger.error(e.getMessage());
         } finally {
