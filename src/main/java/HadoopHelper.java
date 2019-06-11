@@ -50,7 +50,11 @@ public class HadoopHelper {
         FSDataOutputStream outputStream = null;
         try {
             outputStream = fs.append(new Path(dst));
-            outputStream.writeUTF(content);
+
+            outputStream.write(content.getBytes("UTF-8"));
+            // https://stackoverflow.com/questions/7630242/why-does-dataoutputstream-writeutf-add-additional-2-bytes-at-the-beginning
+            //https://stackoverflow.com/questions/46441826/why-cant-i-decode-xdf-%C3%9F-into-utf-8
+//            outputStream.writeUTF(content);
         } catch (IOException e) {
             logger.error(e.getMessage());
         } finally {
@@ -94,8 +98,8 @@ public class HadoopHelper {
             Configuration conf = new Configuration();
 
             // https://blog.csdn.net/wangweislk/article/details/78890163
-            conf.set("dfs.client.block.write.replace-datanode-on-failure.policy","NEVER");
-            conf.set("dfs.client.block.write.replace-datanode-on-failure.enable","true");
+            conf.set("dfs.client.block.write.replace-datanode-on-failure.policy", "NEVER");
+            conf.set("dfs.client.block.write.replace-datanode-on-failure.enable", "true");
 
             return FileSystem.get(new URI(masterUrl), conf);
         } catch (Exception e) {
