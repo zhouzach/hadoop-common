@@ -8,6 +8,7 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 object DeduplicatingAndCollapsing {
 
   val sparkSession: SparkSession = SparkSession.builder.appName("Simple Application")
+    .master("local")
     .enableHiveSupport()
     .getOrCreate()
 

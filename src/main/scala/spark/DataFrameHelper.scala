@@ -6,6 +6,7 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 object DataFrameHelper {
 
   val sparkSession: SparkSession = SparkSession.builder.appName("Simple Application")
+    .master("local")
     .enableHiveSupport()
     .getOrCreate()
 

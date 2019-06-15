@@ -11,6 +11,7 @@ object DataFrameETL {
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
   val sparkSession: SparkSession = SparkSession.builder.appName("Simple Application")
+    .master("local")
     .enableHiveSupport()
     .getOrCreate()
 
