@@ -15,10 +15,39 @@ object NewUV {
     //倒排后的key分组
     val rdd3 = rdd2.groupByKey()
     rdd3.collect().foreach(println)
+    /**
+      *
+      * (d,CompactBuffer(2017-01-02))
+      * (e,CompactBuffer(2017-01-03))
+      * (a,CompactBuffer(2017-01-01, 2017-01-02))
+      * (b,CompactBuffer(2017-01-01, 2017-01-02, 2017-01-03))
+      * (f,CompactBuffer(2017-01-03))
+      * (c,CompactBuffer(2017-01-01))
+      *
+      */
     //取最小时间
     val rdd4 = rdd3.map(kv => (kv._2.min, 1))
     rdd4.foreach(println(_))
+
+    /**
+      *
+      * (2017-01-02,1)
+      * (2017-01-03,1)
+      * (2017-01-01,1)
+      * (2017-01-01,1)
+      * (2017-01-03,1)
+      * (2017-01-01,1)
+      *
+      */
     rdd4.countByKey().foreach(println)
+
+    /**
+      *
+      * (2017-01-03,2)
+      * (2017-01-02,1)
+      * (2017-01-01,3)
+      *
+      */
   }
 }
 
