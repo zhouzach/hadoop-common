@@ -106,4 +106,13 @@ object DataFrameETL {
     logger.info(s"insert $count records into table $sparkSession")
 
   }
+
+  def loadParquet(): Unit ={
+    sparkSession.sql(
+      """
+        |
+        |select * from parquet.`hdfs://path`
+        |
+      """.stripMargin)
+  }
 }

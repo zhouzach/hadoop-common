@@ -1,3 +1,5 @@
+package hadoop
+
 object SqoopHelper {
 
   /**
