@@ -1,9 +1,9 @@
 package spark.sql
 
-import org.apache.spark.sql.functions.col
 import spark.sparkSession
 
-object GroupByCount {
+object GroupDeduplication {
+
 
   def main(args: Array[String]): Unit = {
 
@@ -18,22 +18,13 @@ object GroupByCount {
     sparkSession.createDataFrame(orders).toDF("order_id", "member_id", "m_code","order_time", "price")
       .createOrReplaceTempView("orders")
 
-    sparkSession.sql(
-      """
-        |
-        |select member_id, 4 code, count(*)
-        |from orders
-        |group by member_id
-        |
-      """.stripMargin)
-      .show()
 
     sparkSession.sql(
       """
         |
-        |select member_id, 4 code, count(member_id)
+        |select member_id, m_code
         |from orders
-        |group by member_id
+        |group by member_id,m_code
         |
       """.stripMargin)
       .show()
@@ -60,14 +51,13 @@ object GroupByCount {
 
 
 
-
-
-//      .select("member_id","order_id")
-//      .groupBy("member_id")
-//      .count()
-//      .filter(col("count").>(1))
-//      .show()
+    //      .select("member_id","order_id")
+    //      .groupBy("member_id")
+    //      .count()
+    //      .filter(col("count").>(1))
+    //      .show()
 
   }
+
 
 }

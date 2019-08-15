@@ -4,7 +4,7 @@ import org.apache.spark.sql.expressions.Aggregator
 import org.apache.spark.sql.{Encoder, Encoders, Row}
 import org.apache.spark.sql.functions._
 
-case class MemberOrder(member: String, order: String)
+//case class MemberOrder(member: String, order: String)
 
 case class RowInfo(member: String, order: String, prices: Seq[Double])
 
