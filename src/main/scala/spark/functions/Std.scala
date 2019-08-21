@@ -5,6 +5,35 @@ import spark.sparkSession
 object Std {
   import sparkSession.implicits._
   def main(args: Array[String]): Unit = {
+    val rddstr =sparkSession.sparkContext.parallelize(Seq("2017-10-01 18:12:47","2017-10-02 18:12:47", "2017-10-03 18:12:47"))
+    rddstr.toDF("cnt").createOrReplaceTempView("dates")
+    sparkSession.sql(
+      """
+        |
+        |select unix_timestamp(cnt)
+        |from dates
+        |""".stripMargin)
+        .show()
+    sparkSession.sql(
+      """
+        |
+        |select
+        |     stddev(unix_timestamp(cnt)) as stddev_cnt,
+        |     stddev_samp(unix_timestamp(cnt)) as stddev_samp_cnt,
+        |     stddev_pop(unix_timestamp(cnt)) as stddev_pop_cnt,
+        |     variance(unix_timestamp(cnt)) as variance_cnt,
+        |     var_samp(unix_timestamp(cnt)) as var_samp_cnt,
+        |     var_pop(unix_timestamp(cnt)) as var_pop_cnt
+        |
+        |from dates
+        |
+        |
+      """.stripMargin)
+      .show()
+
+
+
+
 
     val rdd =sparkSession.sparkContext.parallelize(Seq(0,1,2))
 
@@ -26,7 +55,7 @@ object Std {
         |
         |
       """.stripMargin)
-      .show()
+//      .show()
 
     /**
      * 使用N所计算得到的方差及标准差只能用来表示该数据集本身(population)的离散程度；如果数据集是某个更大的研究对象的样本(sample)，
@@ -70,7 +99,7 @@ object Std {
         |
         |
       """.stripMargin)
-      .show()
+//      .show()
 
     /**
      *
