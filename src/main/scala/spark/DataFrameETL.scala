@@ -12,9 +12,26 @@ object DataFrameETL {
 
   val sparkSession: SparkSession = SparkSession.builder.appName("Simple Application")
     .master("local")
-    .enableHiveSupport()
+//    .enableHiveSupport()
     .getOrCreate()
 
+  def main(args: Array[String]): Unit = {
+
+    val orders = Seq(
+      ("o1", "u1", "2019-07-01", 100.0),
+      ("o2", "u1", "2019-07-22", 120.0),
+      ("o3", "u2", "2019-08-01", 100.0),
+      ("o4", "u1", "2019-08-02", 220.0),
+
+
+      ("o5", "u2", "2019-09-12", 220.0)
+
+    )
+    val orderDF = sparkSession.createDataFrame(orders).toDF("order_id", "member_id", "order_time", "price")
+    export2csv(orderDF, "/Users/Zach/hadoop-common/output")
+
+
+  }
   def exportByJDBC(dataFrame: DataFrame, oracleTableName: String) = {
 
     val oracleConfig = FileConfig.oracleConfig
@@ -32,8 +49,16 @@ object DataFrameETL {
       .jdbc(oracleUrl, oracleTableName, prop)
   }
 
-  def export2Hdfs(dataFrame: DataFrame, fileFullPath: String) = {
+  def export2parquet(dataFrame: DataFrame, fileFullPath: String) = {
     dataFrame.write.mode(SaveMode.Overwrite).parquet(fileFullPath)
+  }
+
+  def export2csv(dataFrame: DataFrame, fileFullPath: String) = {
+    dataFrame.write
+      .option("header", "true")
+      .option("inferSchema", "true")
+      .option("delimiter", "|")
+      .mode(SaveMode.Overwrite).csv(fileFullPath)
   }
 
 
