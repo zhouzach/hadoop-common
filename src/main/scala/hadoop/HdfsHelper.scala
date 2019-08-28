@@ -118,4 +118,14 @@ object HdfsHelper {
     }
   }
 
+  def close(fs: FileSystem) = {
+    try {
+      fs.close()
+    } catch {
+      case e: IOException =>
+        e.printStackTrace()
+    }
+
+  }
+
 }
