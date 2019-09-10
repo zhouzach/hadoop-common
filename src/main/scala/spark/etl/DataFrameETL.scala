@@ -1,11 +1,15 @@
-package spark
+package spark.etl
 
 import java.util.Properties
 
 import config.FileConfig
+import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 import org.slf4j.{Logger, LoggerFactory}
 
+/**
+ * https://bigdata-etl.com/in-what-way-effectively-exploiting-api-dataframe-while-loading-data/
+ */
 object DataFrameETL {
 
   val logger: Logger = LoggerFactory.getLogger(getClass)
@@ -93,43 +97,26 @@ object DataFrameETL {
        """.stripMargin)
   }
 
-  def loadCSV(fileFullPath: String, delimiter: String, sparkTable: String) = {
+  def loadCSV(csvPath: String, schemaPath: String, delimiter: String, sparkTable: String) = {
 
-    val schema = sparkSession.table(s"$sparkTable").schema
-
-    //        = new StructType()
-    //          .add("begin", StringType, true)
-    //          .add("end", StringType, true)
-    //          .add("TASerialNO", StringType, true)
-    //          .add("SerialNO", StringType, true)
-    //          .add("clarity", StringType, true)
-    //          .add("depth", DoubleType, true)
-    //          .add("table", DoubleType, true)
-    //          .add("price", IntegerType, true)
-    //          .add("x", DoubleType, true)
-    //          .add("y", DoubleType, true)
-    //          .add("z", DoubleType, true)
+    //./src/main/resources/people.schema
+    val ddl = sparkSession.sparkContext.textFile(schemaPath)
+      .toLocalIterator.toList.mkString("")
+    val schema = StructType.fromDDL(ddl)
+//    val schema = sparkSession.table(s"$sparkTable").schema
 
     val confirmDetailDF = sparkSession.read
       .schema(schema)
       .format("csv")
       .option("header", "false")
-      .option("inferSchema", "true")
       //          .option("mode", "DROPMALFORMED")
       .option("delimiter", delimiter)
-      .load(fileFullPath)
+      .load(csvPath)
       .cache()
 
     confirmDetailDF.show()
 
-    val dataCount = confirmDetailDF.count()
-
     confirmDetailDF.write.insertInto(s"$sparkTable")
-
-
-    val count = sparkSession.sql(s"select count(*) from $sparkTable").collect().head.getAs[Long](0)
-    logger.info(s"insert $count records into table $sparkSession")
-
   }
 
   def loadParquet(): Unit ={
