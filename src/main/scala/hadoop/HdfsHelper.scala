@@ -4,6 +4,7 @@ import java.io.IOException
 import java.net.URI
 
 import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.permission.AclEntry
 import org.apache.hadoop.fs.{FileSystem, FileUtil, Path}
 
 import scala.io.Source
@@ -169,6 +170,36 @@ object HdfsHelper {
         e.printStackTrace()
     }
 
+  }
+
+  /**
+   * Parses a string representation of an ACL spec into a list of AclEntry
+   * objects. Example: "user::rwx,user:foo:rw-,group::r--,other::---"
+   *
+   * @param aclSpec
+   * String representation of an ACL spec.
+   * @param includePermission
+   * for setAcl operations this will be true. i.e. AclSpec should
+   * include permissions.<br>
+   * But for removeAcl operation it will be false. i.e. AclSpec should
+   * not contain permissions.<br>
+   * Example: "user:foo,group:bar"
+   */
+  def modifyAcl(fs: FileSystem, pathStr: String, aclSpec: String, includePermission: Boolean) = {
+    try {
+      val path = new Path(pathStr)
+      println(s"acl print: ${fs.getAclStatus(path)}")
+      fs.modifyAclEntries(path, AclEntry.parseAclSpec(aclSpec, includePermission))
+      //      fs.setAcl(path, AclEntry.parseAclSpec(aclSpec, includePermission))
+      println(s"new acl print: ${fs.getAclStatus(path)}")
+    } catch {
+      case ex: UnsupportedOperationException =>
+        ex.printStackTrace()
+      case e: IOException =>
+        e.printStackTrace()
+    } finally {
+      fs.close()
+    }
   }
 
 }
