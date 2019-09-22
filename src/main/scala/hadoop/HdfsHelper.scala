@@ -111,16 +111,16 @@ object HdfsHelper {
   /**
    *
    * @param fs
-   * @param srcFilePattern eg: /user/sqoop/part*
-   * @param dstFilePrefix
+   * @param srcPath
+   * @param dstPathPrefix
    */
-  def renameBulk(fs: FileSystem, srcFilePattern: String, dstFilePrefix: String, dstFileSuffix: String) = {
+  def renameBulk(fs: FileSystem, srcPath: String, dstPathPrefix: String, dstFileSuffix: String) = {
 
-    val srcPath = new Path(srcFilePattern)
+    val srcFilePattern = new Path(s"$srcPath/part*")
 
     try {
-      fs.globStatus(srcPath).foreach { file =>
-        val dstPath = new Path(dstFilePrefix + System.currentTimeMillis() + dstFileSuffix)
+      fs.globStatus(srcFilePattern).foreach { file =>
+        val dstPath = new Path(dstPathPrefix + System.currentTimeMillis() + dstFileSuffix)
         fs.rename(file.getPath, dstPath);
       }
     } catch {

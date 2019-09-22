@@ -2,13 +2,7 @@ package spark
 
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.apache.spark.sql.functions.collect_list
-import org.apache.spark.sql.functions.concat
-import org.apache.spark.sql.functions.grouping
-import org.apache.spark.sql.functions.col
-import org.apache.spark.sql.functions.array
-import spark.sql.MapType.sparkSession
-import collection.JavaConverters._
+import scala.collection.JavaConverters._
 
 
 object DataFrameHelper {
@@ -20,7 +14,11 @@ object DataFrameHelper {
 
 
   def main(args: Array[String]): Unit = {
-    createDataFrameSeqSchema().show()
+    createDataFrameFromSeqSchema().show()
+  }
+
+  def createEmptyDataFrame() = {
+    sparkSession.createDataFrame(sparkSession.sparkContext.emptyRDD[Row], sparkSession.table("").schema)
   }
 
   def createDataFrameFromSeq() = {
@@ -28,7 +26,7 @@ object DataFrameHelper {
     Seq(1,2,3).toDF("ids").show()
   }
 
-  def createDataFrameSeqSchema()  = {
+  def createDataFrameFromSeqSchema()  = {
     val fields = Seq(
       StructField("col1", IntegerType, false),
       StructField("col2", IntegerType, false),
@@ -37,9 +35,6 @@ object DataFrameHelper {
     val schema = StructType(fields)
     sparkSession.createDataFrame(List(Row.fromSeq(Seq(1,2,3))).asJava, schema)
   }
-//  def createDataFrameFromSeqType() = {
-//    sparkSession.createDataFrame[Int](Seq(1,2))
-//  }
 
   def createDataFrameTupleSeq() = {
     val userData = Seq(("1","2","3"))
@@ -55,11 +50,6 @@ object DataFrameHelper {
     rdd.toDF("id")
   }
 
-//  def dataFrameFromRDDType() = {
-//    val rdd =sparkSession.sparkContext.parallelize(Seq(1,2,3))
-//
-//    sparkSession.createDataFrame[Int](rdd)
-//  }
 
   /**
     * https://medium.com/@mrpowers/manually-creating-spark-dataframes-b14dae906393

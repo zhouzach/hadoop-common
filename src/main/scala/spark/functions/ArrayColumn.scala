@@ -24,21 +24,22 @@ object ArrayColumn {
     val orderDF = sparkSession.createDataFrame(orders).toDF("order_id", "member_id", "order_time", "price")
 
     val itemDF = orderDF
-//      .withColumn("items1", typedLit(Seq(1, 2, 3, 4, 5)))
+      .withColumn("items1", typedLit("hello"))
+    //      .withColumn("items1", typedLit(Seq(1, 2, 3, 4, 5)))
 //      .withColumn("items2", typedLit(Seq(2, 3, 5)))
 //      .withColumn("item1_size", size(col("items1")))
 //      .withColumn("item1_head", col("items1").getItem(0))
 //      .withColumn("contains", array_contains(col("items1"), 3))
-      .withColumn("items31", struct("order_time", "price"))
-      .withColumn("items32", array("order_time", "price"))
-      .withColumn("items33", map(col("order_time"), col("price")))
+//      .withColumn("items31", struct("order_time", "price"))
+//      .withColumn("items32", array("order_time", "price"))
+//      .withColumn("items33", map(col("order_time"), col("price")))
 //      .withColumn("items34", typedLit(Seq("a",null)))
 //      .withColumn("contains", when(array_contains(col("items3"), "str"),true)
 //        .otherwise(false))
 
-    itemDF.printSchema()
-//    itemDF.show()
-    itemDF.foreach(println(_))
+//    itemDF.printSchema()
+    itemDF.show()
+//    itemDF.foreach(println(_))
 
 //    implicit val encoder = Encoders.product[(String, Seq[(Int, Int)])]
 //    val resutlDF = itemDF.map { r =>
