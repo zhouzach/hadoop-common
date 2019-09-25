@@ -1,20 +1,41 @@
-package spark
+package spark.etl
 
 import java.util.Properties
 
 import config.FileConfig
+import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 import org.slf4j.{Logger, LoggerFactory}
 
+/**
+ * https://bigdata-etl.com/in-what-way-effectively-exploiting-api-dataframe-while-loading-data/
+ */
 object DataFrameETL {
 
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
   val sparkSession: SparkSession = SparkSession.builder.appName("Simple Application")
     .master("local")
-    .enableHiveSupport()
+//    .enableHiveSupport()
     .getOrCreate()
 
+  def main(args: Array[String]): Unit = {
+
+    val orders = Seq(
+      ("o1", "u1", "2019-07-01", 100.0),
+      ("o2", "u1", "2019-07-22", 120.0),
+      ("o3", "u2", "2019-08-01", 100.0),
+      ("o4", "u1", "2019-08-02", 220.0),
+
+
+      ("o5", "u2", "2019-09-12", 220.0)
+
+    )
+    val orderDF = sparkSession.createDataFrame(orders).toDF("order_id", "member_id", "order_time", "price")
+    export2csv(orderDF, "/Users/Zach/hadoop-common/output")
+
+
+  }
   def exportByJDBC(dataFrame: DataFrame, oracleTableName: String) = {
 
     val oracleConfig = FileConfig.oracleConfig
@@ -32,8 +53,16 @@ object DataFrameETL {
       .jdbc(oracleUrl, oracleTableName, prop)
   }
 
-  def export2Hdfs(dataFrame: DataFrame, fileFullPath: String) = {
+  def export2parquet(dataFrame: DataFrame, fileFullPath: String) = {
     dataFrame.write.mode(SaveMode.Overwrite).parquet(fileFullPath)
+  }
+
+  def export2csv(dataFrame: DataFrame, fileFullPath: String) = {
+    dataFrame.write
+      .option("header", "true")
+      .option("inferSchema", "true")
+      .option("delimiter", "|")
+      .mode(SaveMode.Overwrite).csv(fileFullPath)
   }
 
 
@@ -68,43 +97,26 @@ object DataFrameETL {
        """.stripMargin)
   }
 
-  def loadCSV(fileFullPath: String, delimiter: String, sparkTable: String) = {
+  def loadCSV(csvPath: String, schemaPath: String, delimiter: String, sparkTable: String) = {
 
-    val schema = sparkSession.table(s"$sparkTable").schema
-
-    //        = new StructType()
-    //          .add("begin", StringType, true)
-    //          .add("end", StringType, true)
-    //          .add("TASerialNO", StringType, true)
-    //          .add("SerialNO", StringType, true)
-    //          .add("clarity", StringType, true)
-    //          .add("depth", DoubleType, true)
-    //          .add("table", DoubleType, true)
-    //          .add("price", IntegerType, true)
-    //          .add("x", DoubleType, true)
-    //          .add("y", DoubleType, true)
-    //          .add("z", DoubleType, true)
+    //./src/main/resources/people.schema
+    val ddl = sparkSession.sparkContext.textFile(schemaPath)
+      .toLocalIterator.toList.mkString("")
+    val schema = StructType.fromDDL(ddl)
+//    val schema = sparkSession.table(s"$sparkTable").schema
 
     val confirmDetailDF = sparkSession.read
       .schema(schema)
       .format("csv")
       .option("header", "false")
-      .option("inferSchema", "true")
       //          .option("mode", "DROPMALFORMED")
       .option("delimiter", delimiter)
-      .load(fileFullPath)
+      .load(csvPath)
       .cache()
 
     confirmDetailDF.show()
 
-    val dataCount = confirmDetailDF.count()
-
     confirmDetailDF.write.insertInto(s"$sparkTable")
-
-
-    val count = sparkSession.sql(s"select count(*) from $sparkTable").collect().head.getAs[Long](0)
-    logger.info(s"insert $count records into table $sparkSession")
-
   }
 
   def loadParquet(): Unit ={

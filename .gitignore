@@ -24,6 +24,9 @@ project/plugins/project/
 
 # Java-IDE specific
 out/
+output
+*.csv
+*.crc
 
 # redis
 *.rdb
