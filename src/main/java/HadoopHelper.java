@@ -22,6 +22,16 @@ public class HadoopHelper {
                 ".parquet");
     }
 
+    public static boolean exist(FileSystem fs, String path){
+        try {
+            return fs.exists(new Path(path));
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            return false;
+        }
+
+    }
+
     public static void createFile(FileSystem fs, String file) {
         Path filePah = new Path(file);
 
