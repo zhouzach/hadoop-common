@@ -1,14 +1,12 @@
 import org.apache.hadoop.security.UserGroupInformation;
 
-import org.apache.hadoop.security.UserGroupInformation;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
-public class HiveSimple2 {
+/**
+ * https://blog.csdn.net/u013850277/article/details/77281229
+ */
+public class KerberosHiveHelper {
     /**
      * 用于连接Hive所需的一些参数设置 driverName:用于连接hive的JDBC驱动名 When connecting to
      * HiveServer2 with Kerberos authentication, the URL format is:
@@ -16,7 +14,6 @@ public class HiveSimple2 {
      * <Server_Principal_of_HiveServer2>
      */
     private static String driverName = "org.apache.hive.jdbc.HiveDriver";
-    // 注意：这里的principal是固定不变的，其指的hive服务所对应的principal,而不是用户所对应的principal
     private static String url = "jdbc:hive2://bigdata40:10000/admin;principal=hive/bigdata40@BIGDATA.COM";
     private static String sql = "";
     private static ResultSet res;
@@ -30,9 +27,13 @@ public class HiveSimple2 {
             // 默认：这里不设置的话，win默认会到 C盘下读取krb5.init
             System.setProperty("java.security.krb5.conf", "C:/Windows/krbconf/bms/krb5.ini");
         } // linux 会默认到 /etc/krb5.conf 中读取krb5.conf,本文笔者已将该文件放到/etc/目录下，因而这里便不用再设置了
+
+        System.setProperty("java.security.krb5.conf", FilePathUtil.getPath("krb5.conf"));
+
         try {
             UserGroupInformation.setConfiguration(conf);
-            UserGroupInformation.loginUserFromKeytab("test2/hdp39@BMSOFT.COM", "./conf/test2.keytab");
+            //user: principal
+            UserGroupInformation.loginUserFromKeytab("user@example.COM", FilePathUtil.getPath("user.keytab"));
         } catch (IOException e1) {
             e1.printStackTrace();
         }
@@ -49,6 +50,7 @@ public class HiveSimple2 {
      */
     public static boolean show_tables(Statement statement) {
         sql = "SHOW TABLES";
+//        sql = "SHOW DATABASES";
         System.out.println("Running:" + sql);
         try {
             ResultSet res = statement.executeQuery(sql);
@@ -150,6 +152,7 @@ public class HiveSimple2 {
 
         try {
             Connection conn = get_conn();
+            System.out.println("connection: "+ conn);
             Statement stmt = conn.createStatement();
             // 创建的表名
             String tableName = "test_100m";
