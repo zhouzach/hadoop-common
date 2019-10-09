@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 
 /**
  * https://www.jianshu.com/p/62aa4f9e0615
+ * https://help.finebi.com/doc-view-293.html
  * https://cloud.tencent.com/developer/article/1078136
  * https://github.com/onefoursix/Cloudera-Impala-JDBC-Example
  */
