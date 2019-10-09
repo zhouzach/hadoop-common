@@ -14,8 +14,10 @@ object FileConfig {
 
   val oracleConfig: Config = combinedConfig.getConfig("oracle")
 
+  val emailConfig: Config = combinedConfig.getConfig("email")
 
-  printConf(combinedConfig)
+
+  printConf(emailConfig)
   def printConf(config: Config): Unit = println(config.root()
     .render(ConfigRenderOptions.concise().setFormatted(true).setJson(true)))
 
