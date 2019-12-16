@@ -27,6 +27,7 @@ out/
 output
 *.csv
 *.crc
+tmp
 
 # redis
 *.rdb
