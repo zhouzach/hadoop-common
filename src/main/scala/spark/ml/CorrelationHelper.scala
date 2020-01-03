@@ -3,7 +3,7 @@ package spark.ml
 import org.apache.spark.ml.linalg.{Matrix, Vectors}
 import org.apache.spark.ml.stat.Correlation
 import org.apache.spark.sql.Row
-import spark.DataFrameHelper.sparkSession
+import spark.df.DataFrameHelper.sparkSession
 
 object CorrelationHelper {
 

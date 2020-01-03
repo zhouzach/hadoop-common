@@ -2,7 +2,7 @@ package spark.ml
 
 import org.apache.spark.ml.linalg.{Vector, Vectors}
 import org.apache.spark.ml.stat.ChiSquareTest
-import spark.DataFrameHelper.sparkSession
+import spark.df.DataFrameHelper.sparkSession
 
 object HypothesisTesting {
 
