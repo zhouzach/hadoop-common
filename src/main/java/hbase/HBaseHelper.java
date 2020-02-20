@@ -1,6 +1,8 @@
 package hbase;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.CellScanner;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
@@ -10,7 +12,9 @@ import org.apache.hadoop.hbase.util.Pair;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class HBaseHelper {
@@ -32,25 +36,32 @@ public class HBaseHelper {
     public static void main(String[] args) {
 //            System.out.println(connection);
 //        createTable("users", Arrays.asList("info"));
+
 //        putRow("users","-123tom","info", "name", "tom");
 
-        List<Pair<String, String>> infoPairs = Arrays.asList(
-                Pair.newPair("age", "15"),
-                Pair.newPair("score", "85")
-        );
-        putRow("users", "-123tom", "info", infoPairs);
-        List<Pair<String, String>> codingPairs = Arrays.asList(
-                Pair.newPair("scala", "1"),
-                Pair.newPair("java", "1")
-        );
-        putRow("users", "-123tom", "coding", codingPairs);
+//        List<Pair<String, String>> infoPairs = Arrays.asList(
+//                Pair.newPair("age", "15"),
+//                Pair.newPair("score", "85")
+//        );
+//        putRow("users", "-123tom", "info", infoPairs);
+//        List<Pair<String, String>> codingPairs = Arrays.asList(
+//                Pair.newPair("scala", "1"),
+//                Pair.newPair("java", "1")
+//        );
+//        putRow("users", "-123tom", "coding", codingPairs);
+
+
 //        addColumnFamily("users", Arrays.asList("coding2"));
-//        deleteRow("users","-123tom");
-//        ResultScanner rs = getScanner("users");
-//        listResult(rs);
 //        deleteColumnFamily("users", Arrays.asList("coding1"));
+//        deleteRow("users","-123tom");
+
+        ResultScanner rs = getScanner("users");
+        listResult(rs);
+        System.out.println();
+        listResultByRowKey("users","-123tom");
 //        listTableNames();
-        deleteTable("users");
+
+//        deleteTable("users");
 
         close(connection);
     }
@@ -338,6 +349,43 @@ public class HBaseHelper {
             });
 
 
+        }
+
+    }
+
+    //https://www.programcreek.com/java-api-examples/index.php?api=org.apache.hadoop.hbase.Cell
+    public static void listResultByRowKey(String tableName, String rowKey) {
+        try {
+            Table table = connection.getTable(TableName.valueOf(tableName));
+            Get get = new Get(Bytes.toBytes(rowKey));
+
+            Result result = table.get(get);
+
+            final CellScanner cellScanner = result.cellScanner();
+            while (cellScanner.advance()){
+                final Cell cell = cellScanner.current();
+
+                // get the column family
+                final byte[] colunmnFamily = new byte[cell.getFamilyLength()];
+                System.arraycopy(cell.getFamilyArray(), cell.getFamilyOffset(),
+                        colunmnFamily, 0, cell.getFamilyLength());
+                System.out.print(Bytes.toString(colunmnFamily) + ",");
+
+                // get the column qualifier
+                final byte[] colunmnQualifier = new byte[cell.getQualifierLength()];
+                System.arraycopy(cell.getQualifierArray(), cell.getQualifierOffset(),
+                        colunmnQualifier, 0, cell.getQualifierLength());
+                System.out.print(Bytes.toString(colunmnQualifier)+ ",");
+
+                // get the value
+                final byte[] value = new byte[cell.getValueLength()];
+                System.arraycopy(cell.getValueArray(), cell.getValueOffset(),
+                        value, 0, cell.getValueLength());
+                System.out.println(Bytes.toString(value));
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
