@@ -38,12 +38,20 @@ public class HBaseHelper {
 //        createTable("users", Arrays.asList("info"));
 
 //        putRow("users","-123tom","info", "name", "tom");
-
-//        List<Pair<String, String>> infoPairs = Arrays.asList(
+//
+//        List<Pair<String, String>> infoPairs1 = Arrays.asList(
 //                Pair.newPair("age", "15"),
 //                Pair.newPair("score", "85")
 //        );
-//        putRow("users", "-123tom", "info", infoPairs);
+//        putRow("users", "-123tom", "info", infoPairs1);
+
+        List<Pair<String, String>> infoPairs2 = Arrays.asList(
+                Pair.newPair("name", "marry"),
+                Pair.newPair("age", "18"),
+                Pair.newPair("score", "99")
+        );
+        putRow("users", "-123marry", "info", infoPairs2);
+
 //        List<Pair<String, String>> codingPairs = Arrays.asList(
 //                Pair.newPair("scala", "1"),
 //                Pair.newPair("java", "1")
@@ -55,10 +63,10 @@ public class HBaseHelper {
 //        deleteColumnFamily("users", Arrays.asList("coding1"));
 //        deleteRow("users","-123tom");
 
-        ResultScanner rs = getScanner("users");
-        listResult(rs);
-        System.out.println();
-        listResultByRowKey("users","-123tom");
+//        ResultScanner rs = getScanner("users");
+//        listResult(rs);
+//        System.out.println();
+//        listResultByRowKey("users","-123tom");
 //        listTableNames();
 
 //        deleteTable("users");
