@@ -39,11 +39,20 @@ public class HBaseHelper {
 
 //        putRow("users","-123tom","info", "name", "tom");
 
-//        List<Pair<String, String>> infoPairs = Arrays.asList(
-//                Pair.newPair("age", "20"),
-//                Pair.newPair("score", "95")
+//
+//        List<Pair<String, String>> infoPairs1 = Arrays.asList(
+//                Pair.newPair("age", "15"),
+//                Pair.newPair("score", "85")
 //        );
-//        putRow("users", "-123jack", "info", infoPairs);
+//        putRow("users", "-123tom", "info", infoPairs1);
+
+        List<Pair<String, String>> infoPairs2 = Arrays.asList(
+                Pair.newPair("name", "marry"),
+                Pair.newPair("age", "18"),
+                Pair.newPair("score", "99")
+        );
+        putRow("users", "-123marry", "info", infoPairs2);
+
 //        List<Pair<String, String>> codingPairs = Arrays.asList(
 //                Pair.newPair("scala", "1"),
 //                Pair.newPair("java", "1")
@@ -63,6 +72,7 @@ public class HBaseHelper {
 //        ResultScanner rs = getScanner("users");
         ResultScanner rs = getScanner("users","-123","-124",null);
         listResult(rs);
+
 //        System.out.println();
 //        listResultByRowKey("users","-123tom");
 //        listTableNames();
