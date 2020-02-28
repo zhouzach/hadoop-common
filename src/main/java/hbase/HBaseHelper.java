@@ -40,25 +40,31 @@ public class HBaseHelper {
 //        putRow("users","-123tom","info", "name", "tom");
 
 //        List<Pair<String, String>> infoPairs = Arrays.asList(
-//                Pair.newPair("age", "15"),
-//                Pair.newPair("score", "85")
+//                Pair.newPair("age", "20"),
+//                Pair.newPair("score", "95")
 //        );
-//        putRow("users", "-123tom", "info", infoPairs);
+//        putRow("users", "-123jack", "info", infoPairs);
 //        List<Pair<String, String>> codingPairs = Arrays.asList(
 //                Pair.newPair("scala", "1"),
 //                Pair.newPair("java", "1")
 //        );
 //        putRow("users", "-123tom", "coding", codingPairs);
 
+//        List<Pair<String, String>> infoPairs = Arrays.asList(
+//                Pair.newPair("age", "18"),
+//                Pair.newPair("score", "80")
+//        );
+//        putRow("users", "-124lily", "info", infoPairs);
 
 //        addColumnFamily("users", Arrays.asList("coding2"));
 //        deleteColumnFamily("users", Arrays.asList("coding1"));
 //        deleteRow("users","-123tom");
 
-        ResultScanner rs = getScanner("users");
+//        ResultScanner rs = getScanner("users");
+        ResultScanner rs = getScanner("users","-123","-124",null);
         listResult(rs);
-        System.out.println();
-        listResultByRowKey("users","-123tom");
+//        System.out.println();
+//        listResultByRowKey("users","-123tom");
 //        listTableNames();
 
 //        deleteTable("users");
