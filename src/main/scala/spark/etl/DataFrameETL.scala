@@ -29,11 +29,15 @@ object DataFrameETL {
 
 
       ("o5", "u2", "2019-09-12", 220.0)
-
     )
-    val orderDF = sparkSession.createDataFrame(orders).toDF("order_id", "member_id", "order_time", "price")
-    export2csv(orderDF, "/Users/Zach/hadoop-common/output")
+//    val orderDF = sparkSession.createDataFrame(orders).toDF("order_id", "member_id", "order_time", "price")
+//    export2csv(orderDF, "/Users/Zach/hadoop-common/output")
 
+    val path = "hdfs://nameservice1/data/ods/banban/user_base_info_00/part-m-00000"
+    val schemaPath = "file:////Users/Zach/hadoop-common/src/main/resources/user.schema"
+//    loadCSVBySql(path)
+//    loadCSV(path)
+    loadCSV(path,schemaPath,"|","")
 
   }
   def exportByJDBC(dataFrame: DataFrame, oracleTableName: String) = {
@@ -114,12 +118,37 @@ object DataFrameETL {
       .load(csvPath)
       .cache()
 
-    confirmDetailDF.show()
+    confirmDetailDF.select("uid","nickname").show(100)
 
-    confirmDetailDF.write.insertInto(s"$sparkTable")
+//    confirmDetailDF.write.insertInto(s"$sparkTable")
   }
 
-  def loadParquet(): Unit ={
+  def loadCSV(path: String) = {
+    sparkSession.read
+      .format("csv")
+//      .option("header", "true") //first line in file has headers
+      /**
+       * https://spark.apache.org/docs/2.0.2/api/java/org/apache/spark/sql/DataFrameReader.html
+       * PERMISSIVE : sets other fields to null when it meets a corrupted record. When a schema is set by user, it sets null for extra fields.
+       * DROPMALFORMED : ignores the whole corrupted records.
+       * FAILFAST : throws an exception when it meets corrupted records.
+       */
+      .option("mode", "DROPMALFORMED")
+      .load(path)
+      .show(100)
+  }
+
+  def loadCSVBySql(path: String): Unit ={
+    sparkSession.sql(
+      s"""
+        |
+        |select * from csv.`$path`
+        |
+      """.stripMargin)
+      .show(100)
+  }
+
+  def loadParquetBySql(): Unit ={
     sparkSession.sql(
       """
         |
