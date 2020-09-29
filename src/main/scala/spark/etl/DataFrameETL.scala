@@ -16,7 +16,7 @@ object DataFrameETL {
 
   val sparkSession: SparkSession = SparkSession.builder.appName("Simple Application")
     .master("local")
-//    .enableHiveSupport()
+    //    .enableHiveSupport()
     .getOrCreate()
 
   def main(args: Array[String]): Unit = {
@@ -30,16 +30,18 @@ object DataFrameETL {
 
       ("o5", "u2", "2019-09-12", 220.0)
     )
-//    val orderDF = sparkSession.createDataFrame(orders).toDF("order_id", "member_id", "order_time", "price")
-//    export2csv(orderDF, "/Users/Zach/hadoop-common/output")
+    //    val orderDF = sparkSession.createDataFrame(orders).toDF("order_id", "member_id", "order_time", "price")
+    //    export2csv(orderDF, "/Users/Zach/hadoop-common/output")
 
-    val path = "hdfs://nameservice1/data/ods/banban/user_base_info_00/part-m-00000"
-    val schemaPath = "file:////Users/Zach/hadoop-common/src/main/resources/user.schema"
-//    loadCSVBySql(path)
-//    loadCSV(path)
-    loadCSV(path,schemaPath,"|","")
+    //    val path = "hdfs://nameservice1/data/ods/banban/user_base_info_00/part-m-00000"
+    //    val schemaPath = "file:////Users/Zach/hadoop-common/src/main/resources/user.schema"
+    //    loadCSVBySql(path)
+    val path = "hdfs://nameservice1/apps/operation/anchor_no_live_phones.txt"
+    loadCSV(path)
+    //    loadCSV(path,schemaPath,"|","")
 
   }
+
   def exportByJDBC(dataFrame: DataFrame, oracleTableName: String) = {
 
     val oracleConfig = FileConfig.oracleConfig
@@ -70,7 +72,7 @@ object DataFrameETL {
   }
 
 
-  def loadByJDBC(oracleTable: String, sparkTable: String)={
+  def loadByJDBC(oracleTable: String, sparkTable: String) = {
 
     val oracleConfig = FileConfig.oracleConfig
     val oracleUrl = oracleConfig.getString("url")
@@ -107,7 +109,7 @@ object DataFrameETL {
     val ddl = sparkSession.sparkContext.textFile(schemaPath)
       .toLocalIterator.toList.mkString("")
     val schema = StructType.fromDDL(ddl)
-//    val schema = sparkSession.table(s"$sparkTable").schema
+    //    val schema = sparkSession.table(s"$sparkTable").schema
 
     val confirmDetailDF = sparkSession.read
       .schema(schema)
@@ -118,15 +120,15 @@ object DataFrameETL {
       .load(csvPath)
       .cache()
 
-    confirmDetailDF.select("uid","nickname").show(100)
+    confirmDetailDF.select("uid", "nickname").show(100)
 
-//    confirmDetailDF.write.insertInto(s"$sparkTable")
+    //    confirmDetailDF.write.insertInto(s"$sparkTable")
   }
 
   def loadCSV(path: String) = {
-    sparkSession.read
+    val df = sparkSession.read
       .format("csv")
-//      .option("header", "true") //first line in file has headers
+      //      .option("header", "true") //first line in file has headers
       /**
        * https://spark.apache.org/docs/2.0.2/api/java/org/apache/spark/sql/DataFrameReader.html
        * PERMISSIVE : sets other fields to null when it meets a corrupted record. When a schema is set by user, it sets null for extra fields.
@@ -135,20 +137,27 @@ object DataFrameETL {
        */
       .option("mode", "DROPMALFORMED")
       .load(path)
-      .show(100)
+//      .filter(!_.isNullAt(0)) // load时，已经过滤空行
+
+    println(
+      s"""
+         |
+         |count: ${df.count()}
+         |""".stripMargin)
+    df.show(500)
   }
 
-  def loadCSVBySql(path: String): Unit ={
+  def loadCSVBySql(path: String): Unit = {
     sparkSession.sql(
       s"""
-        |
-        |select * from csv.`$path`
-        |
+         |
+         |select * from csv.`$path`
+         |
       """.stripMargin)
       .show(100)
   }
 
-  def loadParquetBySql(): Unit ={
+  def loadParquetBySql(): Unit = {
     sparkSession.sql(
       """
         |
