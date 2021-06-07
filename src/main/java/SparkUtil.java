@@ -7,7 +7,7 @@ public class SparkUtil {
 
     public static void mergeFile() {
         SparkSession spark = SparkSession.builder()
-//                .master("spark://localhost:7077")
+//                .master("org.rabbit.spark://localhost:7077")
                 .master("local")
                 .getOrCreate();
 

@@ -3,9 +3,9 @@ from pyspark.sql import SparkSession
 from pyspark.ml import Pipeline
 from pyspark.ml.feature import StringIndexer
 
-spark = SparkSession \
+org.rabbit.spark = SparkSession \
     .builder \
-    .appName("python spark job") \
+    .appName("python org.rabbit.spark job") \
     .enableHiveSupport() \
     .getOrCreate()
 
@@ -16,7 +16,7 @@ cSchema = StructType([StructField("id", IntegerType()),
 
 test_list = [[0, 'a', 'x'], [1, 'b', 'y'], [2, 'c', 'z'], [3, 'a', 'z'], [4, 'a', 'u'], [5, 'c', 'y']]
 
-df = spark.createDataFrame(test_list, cSchema)
+df = org.rabbit.spark.createDataFrame(test_list, cSchema)
 
 cols = ['id', 'value']
 

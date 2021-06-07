@@ -18,7 +18,7 @@ public class KerberosImpalaHelper {
     private static String CONNECTION_URL = "jdbc:impala://{0}:21050/;AuthMech=1;KrbRealm={1};KrbHostFQDN={0};KrbServiceName=impala";
 
     private static String SECURITY_KRB5_CONF = "java.security.krb5.conf";
-    private static String HADOOP_SECURITY_AUTH = "hadoop.security.authentication";
+    private static String HADOOP_SECURITY_AUTH = "org.rabbit.hadoop.security.authentication";
     private static String DEFAULT_REALM = "EXAMPLE.CN";
 
 
@@ -72,8 +72,8 @@ public class KerberosImpalaHelper {
             System.setProperty(SECURITY_KRB5_CONF,
                     FilePathUtil.getPath(krb5ConfDest));
 
-//            org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
-//            conf.set("hadoop.security.authentication", "Kerberos");
+//            org.apache.org.rabbit.hadoop.conf.Configuration conf = new org.apache.org.rabbit.hadoop.conf.Configuration();
+//            conf.set("org.rabbit.hadoop.security.authentication", "Kerberos");
 //            UserGroupInformation.setConfiguration(conf);
 
             UserGroupInformation.setConfiguration(KbsConfiguration

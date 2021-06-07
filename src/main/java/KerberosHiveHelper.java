@@ -21,7 +21,7 @@ public class KerberosHiveHelper {
     public static Connection get_conn() throws SQLException, ClassNotFoundException {
         /** 使用Hadoop安全登录 **/
         org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
-        conf.set("hadoop.security.authentication", "Kerberos");
+        conf.set("org.rabbit.hadoop.security.authentication", "Kerberos");
 
         if (System.getProperty("os.name").toLowerCase().startsWith("win")) {
             // 默认：这里不设置的话，win默认会到 C盘下读取krb5.init
