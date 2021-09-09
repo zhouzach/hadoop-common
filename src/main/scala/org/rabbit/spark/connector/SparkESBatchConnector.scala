@@ -16,16 +16,16 @@ object SparkESBatchConnector {
     conf.set("es.query", """ {"query":{"match_all":{}}}""")
     val sc = new SparkContext(conf)
 
-    read(sc)
+    read(sc, "apm-7.13.1-metric-000001")
       .collect().foreach(println(_))
 
 
   }
 
-  def read(sc: SparkContext)={
+  def read(sc: SparkContext, index: String)={
 //    sc.esRDD("airports/_doc","?q=s*")
 
-    sc.esJsonRDD("spark/_doc")
+    sc.esJsonRDD(s"$index/_doc")
   }
 
   def write(sc: SparkContext) = {

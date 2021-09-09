@@ -30,14 +30,14 @@ object DataFrameETL {
 
       ("o5", "u2", "2019-09-12", 220.0)
     )
-    //    val orderDF = sparkSession.createDataFrame(orders).toDF("order_id", "member_id", "order_time", "price")
-    //    export2csv(orderDF, "/Users/Zach/org.rabbit.hadoop-common/output")
+        val orderDF = sparkSession.createDataFrame(orders).toDF("order_id", "member_id", "order_time", "price")
+        export2csv(orderDF, "/Users/Zach/tmp/output")
 
     //    val path = "hdfs://nameservice1/data/ods/banban/user_base_info_00/part-m-00000"
     //    val schemaPath = "file:////Users/Zach/org.rabbit.hadoop-common/src/main/resources/user.schema"
     //    loadCSVBySql(path)
-    val path = "hdfs://nameservice1/apps/operation/anchor_no_live_phones.txt"
-    loadCSV(path)
+//    val path = "hdfs://nameservice1/apps/operation/anchor_no_live_phones.txt"
+//    loadCSV(path)
     //    loadCSV(path,schemaPath,"|","")
 
   }
