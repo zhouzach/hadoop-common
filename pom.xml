@@ -132,6 +132,12 @@
             <artifactId>elasticsearch-spark-20_2.11</artifactId>
             <version>7.13.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.elasticsearch/elasticsearch-hadoop -->
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch-hadoop</artifactId>
+            <version>7.10.0</version>
+        </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
